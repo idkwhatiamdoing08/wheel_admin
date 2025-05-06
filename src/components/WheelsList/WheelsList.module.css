@@ -1,0 +1,29 @@
+.container {
+    margin-left: 150px;
+}
+
+.table {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.tableHeader {
+    width: 960px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+    padding: 0 20px;
+}
+
+.add_button{
+    background: #fafafa;
+    border: 1px solid #000;
+    color: #000;
+}
+.add_button:hover {
+    background: #fff !important;
+    color: #000 !important;
+}

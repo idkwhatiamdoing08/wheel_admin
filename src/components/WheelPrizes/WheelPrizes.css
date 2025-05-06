@@ -1,0 +1,18 @@
+.h1 {
+    text-align: center;
+}
+
+
+.table {
+    margin: 0 auto;
+    max-width: 800px;
+
+}
+
+.add-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 8px;
+}

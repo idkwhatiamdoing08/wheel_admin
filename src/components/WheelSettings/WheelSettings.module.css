@@ -1,0 +1,18 @@
+.form_tittle {
+    text-align: center;
+}
+
+.form {
+    width: 600px;
+    background: #BAC2F7;
+    margin: 0 auto;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+label {
+    width: 200px;
+}
+
+
