@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Button, Popconfirm, Space, message, Tag } from 'antd';
 import data from './data.json';
 import WheelEditForm from '../WheelEditForm/WheelEditForm';
@@ -12,11 +12,14 @@ import {
 } from '@ant-design/icons';
 import styles from './WheelsList.module.css';
 import WheelAddForm from '../WheelAddForm/WheelAddForm';
+import axios from 'axios';
 
 function WheelsList() {
     const [showModal, setShowModal] = useState(false);
      const [showEdit, setShowEdit] = useState(false);
     const { wheelsData } = data;
+
+    
 
     
 
@@ -28,7 +31,6 @@ function WheelsList() {
         return record.Status === 'active';
     };
 
-    // Функция для отображения статуса с иконкой
     const renderStatus = (status) => {
         let icon, color, text;
         
@@ -115,6 +117,7 @@ function WheelsList() {
 
     return (
         <div className={styles.container}>
+            
             <div className={styles.tableHeader}>
                 <h2>Список акционных колес</h2>
                 <Button type="primary" className={styles.add_button} onClick={()=> setShowModal(true)}>
