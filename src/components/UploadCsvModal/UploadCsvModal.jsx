@@ -30,6 +30,7 @@ function UploadCsvModal({ visible, onCancel, onUpload, isLoading, promoName }) {
       onCancel={onCancel}
       onOk={handleUpload}
       okText="Загрузить"
+      cancelText="Отмена"
       confirmLoading={isLoading}
     >
       <Upload

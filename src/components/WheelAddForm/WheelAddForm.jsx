@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Checkbox, DatePicker, Modal } from "antd";
 import styles from "./WheelAddForm.module.css";
-import axios from "axios";
+import { createWheel } from "../WheelsList/WheelsListService";
 
-function WheelAddForm({ open, onCancel }) {
+function WheelAddForm({ open, onCancel, onSuccess }) {
   const [wheelData, setWheelData] = useState({
     name: "",
     count_sectors: "",
@@ -13,22 +13,15 @@ function WheelAddForm({ open, onCancel }) {
     days_of_week: ["Суббота", "Воскресенье"],
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(wheelData);
     try {
-      const response = axios.get(
-        "http://try-your-luck.worktools.space/http://try-your-luck.worktools.space/api/wheel",
+      await createWheel(wheelData);
 
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("acess_token")}`,
-          },
-        }
-      );
-      console.log(response);
+      onCancel();
+      onSuccess();
     } catch (e) {
-      console.error("Ошибка добавления колеса" + e);
+      console.error("Ошибка добавления колеса", e);
     }
   };
 

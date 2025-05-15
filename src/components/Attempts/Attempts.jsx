@@ -122,9 +122,11 @@ function Attempts() {
             onClick={() => showDeleteConfirm(record.key)}
             title="Удалить"
           />
-          <Button type="link" onClick={() => handleEditClick(record)}>
-            Редактировать
-          </Button>
+          <Button
+            type="text"
+            onClick={() => handleEditClick(record)}
+            icon={<EditOutlined />}
+          />
         </Space>
       ),
     },

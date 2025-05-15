@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Space, message, Modal } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import styles from "./EmptyPrizes.module.css";
 import AddPrizeModal from "../AddPrizeModal";
 import {
@@ -117,9 +117,11 @@ function EmptyPrizes() {
             onClick={() => showDeleteConfirm(record.key)}
             title="Удалить"
           />
-          <Button type="link" onClick={() => handleEditClick(record)}>
-            Редактировать
-          </Button>
+          <Button
+            type="text"
+            onClick={() => handleEditClick(record)}
+            icon={<EditOutlined />}
+          />
         </Space>
       ),
     },

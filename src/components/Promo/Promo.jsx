@@ -23,6 +23,7 @@ function Promo() {
   const [editingPrize, setEditingPrize] = useState(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [selectedPromoId, setSelectedPromoId] = useState(null);
+  const [promoCount, setPromoCount] = useState(0);
 
   const loadPrizes = async () => {
     setIsLoading(true);
@@ -32,7 +33,7 @@ function Promo() {
         key: prize.id.toString(),
         id: `00${index + 1}`,
         name: prize.name,
-        count: prize.count || 1,
+        count: promoCount,
       }));
       setPrizeData(formatted);
     } catch (error) {
@@ -140,6 +141,11 @@ function Promo() {
       dataIndex: "name",
       key: "name",
     },
+    {
+      title: "Количество",
+      dataIndex: "count",
+      key: "count",
+    },
 
     {
       title: "Действие",
@@ -154,12 +160,17 @@ function Promo() {
             onClick={() => showDeleteConfirm(record.key)}
             title="Удалить"
           />
-          <Button type="link" onClick={() => handleEditClick(record)}>
-            Ред
-          </Button>
-          <Button type="default" onClick={() => handleUploadClick(record)}>
-            Загрузить CSV
-          </Button>
+          <Button
+            type="text"
+            onClick={() => handleEditClick(record)}
+            icon={<EditOutlined />}
+          />
+
+          <Button
+            type="text"
+            onClick={() => handleUploadClick(record)}
+            icon={<FileTextOutlined />}
+          />
         </Space>
       ),
     },
@@ -174,7 +185,7 @@ function Promo() {
           className={styles.addButton}
           onClick={() => setShowModal(true)}
         >
-          Создать пормокод
+          Создать промокод
         </Button>
       </div>
 

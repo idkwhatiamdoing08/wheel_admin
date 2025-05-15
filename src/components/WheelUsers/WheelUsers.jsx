@@ -1,66 +1,67 @@
-import React from 'react';
-import { Table, Tag } from 'antd';
-import styles from './WheelUsers.module.css';
+import React, { useEffect, useState } from "react";
+import { Table, Tag } from "antd";
+import styles from "./WheelUsers.module.css";
+import axios from "axios";
 
 function WheelUsers() {
-    const dataSource = [
+  const [userData, setUserData] = useState(null);
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(
+        `http://try-your-luck.worktools.space/api/users`,
         {
-            key: '1',
-            id: '001',
-            name: 'Ренжина Александра Сергеевна',
-            attempts: 1,
-        },
-        {
-            key: '2',
-            id: '002',
-            name: 'Курякова Анастасия Сергеевна',
-            attempts: 0,
-        },
-        {
-            key: '3',
-            id: '003',
-            name: 'Денисова Дарья',
-            attempts: 0,
-        },
-        {
-            key: '4',
-            id: '004',
-            name: 'Иванов Александр Николаевич',
-            attempts: 5,
-        },
-    ];
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      console.log(response);
+      const formatted = response.data.map((user, index) => ({
+        key: user.id.toString(),
+        id: index + 1,
+        name: `${user.surname} ${user.name} ${user.patronymic}`,
+        role: user.role,
+      }));
+      setUserData(formatted);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-    const columns = [
-        {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-        },
-        {
-            title: 'ФИО',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Количество попыток',
-            dataIndex: 'attempts',
-            key: 'attempts',
-            align: 'center'
-        },
-    ];
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "ФИО",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Роль",
+      dataIndex: "role",
+      key: "role",
+      align: "center",
+    },
+  ];
 
-    return (
-        <div className={styles.users__wrapper}>
-            <h2 className={styles.users__title}>Пользователи</h2>
-            <div className={styles.users__note}>Максимальное количество попыток: 5</div>
-            <Table 
-                dataSource={dataSource} 
-                columns={columns} 
-                pagination={false}
-                className={styles.users__table}
-            />
-        </div>
-    );
+  return (
+    <div className={styles.users__wrapper}>
+      <h2 className={styles.users__title}>Пользователи</h2>
+
+      <Table
+        dataSource={userData}
+        columns={columns}
+        pagination={false}
+        className={styles.users__table}
+      />
+    </div>
+  );
 }
 
 export default WheelUsers;

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Table, Button, Space, message, Tag, Modal } from "antd";
 import { useState } from "react";
 import AddPrizeModal from "../AddPrizeModal";
+import AddPhysicalModal from "../Modals/AddPhysicalModal";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import styles from "./PhysicalPrizes.module.css";
 import {
@@ -42,10 +43,14 @@ function PhysicalPrizes() {
     setIsLoading(true);
     try {
       if (editingPrize) {
-        await updatePhysicalPrize(editingPrize.key, values.prizeName, 100);
+        await updatePhysicalPrize(
+          editingPrize.key,
+          values.prizeName,
+          values.prizeCount
+        );
         message.success("Приз успешно обновлен");
       } else {
-        await addPhysicalPrize(values.prizeName, 150);
+        await addPhysicalPrize(values.prizeName, values.prizeCount);
         message.success("Приз успешно добавлен");
       }
       setShowModal(false);
@@ -75,8 +80,7 @@ function PhysicalPrizes() {
       message.success("Приз успешно удален");
       loadPrizes();
     } catch (error) {
-      message.error("Ошибка при удалении приза");
-      console.error(error);
+      alert(error.response.data.message);
     } finally {
       setIsLoading(false);
       setDeleteConfirmVisible(false);
@@ -118,9 +122,11 @@ function PhysicalPrizes() {
             onClick={() => showDeleteConfirm(record.key)}
             title="Удалить"
           />
-          <Button type="link" onClick={() => handleEditClick(record)}>
-            Редактировать
-          </Button>
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={() => handleEditClick(record)}
+          />
         </Space>
       ),
     },
@@ -149,7 +155,7 @@ function PhysicalPrizes() {
         loading={isLoading}
       />
 
-      <AddPrizeModal
+      {/* <AddPrizeModal
         visible={showModal}
         handleCancel={() => {
           setShowModal(false);
@@ -161,6 +167,19 @@ function PhysicalPrizes() {
           editingPrize ? "Редактирование приза" : "Создание вещественного приза"
         }
         initialValue={editingPrize?.name}
+      /> */}
+      <AddPhysicalModal
+        visible={showModal}
+        handleCancel={() => {
+          setShowModal(false);
+          setEditingPrize(null);
+        }}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        title={
+          editingPrize ? "Редактирование приза" : "Создание вещественного приза"
+        }
+        initialValue={{ name: editingPrize?.name, count: editingPrize?.count }}
       />
 
       <Modal
