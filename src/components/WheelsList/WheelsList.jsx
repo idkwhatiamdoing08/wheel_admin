@@ -34,6 +34,7 @@ function WheelsList() {
         count_sectors: wheel.count_sectors,
         date_start: wheel.date_start,
         date_end: wheel.date_end,
+        sectors: wheel.sectors,
       }));
       setWheelsData(formatted);
     } catch (error) {

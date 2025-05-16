@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Checkbox, DatePicker, Select, Input, Button, Modal } from "antd";
+import {
+  Checkbox,
+  DatePicker,
+  Select,
+  Input,
+  Button,
+  Modal,
+  message,
+} from "antd";
 import moment from "moment";
 import styles from "./WheelEditForm.module.css";
 import { updateWheel } from "../WheelsList/WheelsListService";
+import Sectors from "../Sectors/Sectors";
+import {
+  updateSector,
+  deleteSector,
+  createSector,
+  getPrizes,
+} from "../Sectors/SectorsService";
 
 const { Option } = Select;
 
@@ -18,6 +33,9 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
     count_sectors: 1,
   });
 
+  const [prizes, setPrizes] = useState([]);
+  const [selectedPrize, setSelectedPrize] = useState(null);
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -29,10 +47,20 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
         days_of_week: initialData.days_of_week || ["Суббота"],
         animation: true,
       });
-
+      setSectors(initialData.sectors || []);
       setSectorCount(initialData.count_sectors || 1);
+      fetchPrizes();
     }
   }, [initialData]);
+
+  const fetchPrizes = async () => {
+    try {
+      const data = await getPrizes();
+      setPrizes(data);
+    } catch (err) {
+      console.error("Ошибка при загрузке призов:", err);
+    }
+  };
 
   const handleChange = (key, value) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -45,6 +73,36 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
         : [...prev.days_of_week, day];
       return { ...prev, days_of_week: updatedDays };
     });
+  };
+
+  const handleSectorChange = async (id, key, value) => {
+    const updatedSectors = sectors.map((sector) =>
+      sector.id === id ? { ...sector, [key]: value } : sector
+    );
+    setSectors(updatedSectors);
+
+    const updatedSector = updatedSectors.find((s) => s.id === id);
+    const payload = {
+      prize_type: updatedSector.prize_type || "material_thing", // или другой тип по умолчанию
+      prize_id: updatedSector.prize?.id || updatedSector.prize_id,
+      probability: updatedSector.probability,
+      wheel_id: initialData.key,
+    };
+
+    try {
+      await updateSector(initialData.key, id, payload);
+    } catch (error) {
+      console.error("Ошибка при обновлении сектора:", error);
+    }
+  };
+
+  const handleDeleteSector = async (sectorId) => {
+    try {
+      await deleteSector(sectorId);
+      setSectors((prev) => prev.filter((s) => s.id !== sectorId));
+    } catch (err) {
+      console.error("Ошибка при удалении сектора:", err);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -63,17 +121,44 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error("Ошибка при обновлении:", err);
-      console.log(formData);
-      console.log(payload);
     }
   };
 
-  const handlePrizeChange = (id, value) => {
+  const handleProbabilityChange = (id, value) => {
+    handleSectorChange(id, "probability", value);
+  };
+
+  const handlePrizeChange = async (id, prizeId) => {
+    const prize = prizes.find((p) => p.name === prizeId || p.id === prizeId);
+    if (!prize) return;
     setSectors((prev) =>
-      prev.map((sector) =>
-        sector.id === id ? { ...sector, prize: value } : sector
-      )
+      prev.map((sector) => (sector.id === id ? { ...sector, prize } : sector))
     );
+
+    try {
+      await updateSector(initialData.key, id, { prize_id: prize.id });
+    } catch (error) {
+      console.error("Ошибка при обновлении приза сектора:", error);
+    }
+  };
+
+  const handleAddSector = async () => {
+    if (!selectedPrize) return;
+
+    try {
+      const newSector = await createSector({
+        prize_id: selectedPrize,
+        probability: 0,
+        wheel_id: initialData.key,
+        prize_type: "material_thing",
+      });
+      setSectors((prev) => [...prev, newSector]);
+      setSelectedPrize(null);
+      message.success("Сектор добавлен");
+    } catch (error) {
+      console.error("Ошибка при добавлении сектора:", error);
+      message.error("Не удалось добавить сектор");
+    }
   };
 
   return (
@@ -88,7 +173,6 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
       <div className={styles.form__wrapper}>
         <h2 className={styles.form__header}>Форма редактирования колеса</h2>
         <form onSubmit={handleSubmit}>
-          {/* Название */}
           <div className={styles.form__field}>
             <label className={styles.form__label}>Название колеса:</label>
             <Input
@@ -98,7 +182,6 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
             />
           </div>
 
-          {/* Даты и статус */}
           <div className={styles.form__body}>
             <div className={styles.form_left}>
               <div className={styles.form__field}>
@@ -153,7 +236,6 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
               </div>
             </div>
 
-            {/* Чекбоксы */}
             <div className={styles.form_right}>
               <div className={styles.form__field}>
                 <label className={styles.form__label}>
@@ -182,7 +264,6 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
             </div>
           </div>
 
-          {/* Количество секторов */}
           <div className={styles.form__field}>
             <label className={styles.form__label}>
               Введите количество секторов:
@@ -193,33 +274,35 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
               onChange={(e) =>
                 handleChange("count_sectors", parseInt(e.target.value) || 1)
               }
-              min={1}
               className={styles.form__input}
             />
           </div>
 
-          {/* Призы (заглушка) */}
           <div className={styles.sectors_section}>
             <h3 className={styles.section_title}>Призы по секторам</h3>
-            <Button type="dashed" className={styles.add_prize_btn}>
-              + Прикрепить приз на сектор
-            </Button>
-            <div className={styles.sectors_list}>
-              {sectors.map((sector) => (
-                <div key={sector.id} className={styles.sector_item}>
-                  <label className={styles.sector_label}>
-                    Сектор {sector.id}:
-                  </label>
-                  <Input
-                    value={sector.prize}
-                    onChange={(e) =>
-                      handlePrizeChange(sector.id, e.target.value)
-                    }
-                    className={styles.sector_input}
-                  />
-                </div>
-              ))}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "16px" }}>
+              <Select
+                style={{ width: 300 }}
+                value={selectedPrize}
+                onChange={setSelectedPrize}
+                placeholder="Выберите приз"
+              >
+                {prizes.map((prize) => (
+                  <Option key={prize.id} value={prize.id}>
+                    {prize.name}
+                  </Option>
+                ))}
+              </Select>
+              <Button type="dashed" onClick={handleAddSector}>
+                + Прикрепить приз на сектор
+              </Button>
             </div>
+            <Sectors
+              sectors={sectors}
+              onPrizeChange={handlePrizeChange}
+              onProbabilityChange={handleProbabilityChange}
+              onDeleteSector={handleDeleteSector}
+            />
           </div>
 
           <button type="submit" className={styles.form__button}>

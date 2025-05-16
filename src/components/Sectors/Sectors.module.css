@@ -1,0 +1,17 @@
+.sector_item {
+    margin-bottom: 16px;
+}
+
+.sector_label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.inputs_row {
+    display: flex;
+    gap: 10px;
+}
+
+.input_half {
+    flex: 1; }

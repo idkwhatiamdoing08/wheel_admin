@@ -10,6 +10,7 @@ import Promo from "./components/Promo/Promo";
 import Attempts from "./components/Attempts/Attempts";
 import EmptyPrizes from "./components/EmptyPrizes/EmptyPrizes";
 import Authorization from "./components/Authorization/Authorization";
+import Wins from "./components/Wins/Wins";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
                   <Route path="/physical-prizes" element={<PhysicalPrizes />} />
                   <Route path="/attempt" element={<Attempts />} />
                   <Route path="/empty-prizes" element={<EmptyPrizes />} />
+                  <Route path="/wins" element={<Wins />} />
                 </Routes>
               </>
             }

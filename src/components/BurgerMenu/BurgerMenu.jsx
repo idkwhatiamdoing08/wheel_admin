@@ -63,6 +63,13 @@ function BurgerMenu() {
       path: "/users",
       className: cn(styles.menuItem, { [styles.active]: current === "users" }),
     },
+    {
+      key: "wins",
+      icon: <img src="/wins.svg" alt="" />,
+      label: "Выигрыши",
+      path: "/wins",
+      className: cn(styles.menuItem, { [styles.active]: current === "wins" }),
+    },
   ];
 
   const findItemByKey = (key) => {
