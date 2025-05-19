@@ -83,7 +83,7 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
 
     const updatedSector = updatedSectors.find((s) => s.id === id);
     const payload = {
-      prize_type: updatedSector.prize_type || "material_thing", // или другой тип по умолчанию
+      prize_type: "material_thing",
       prize_id: updatedSector.prize?.id || updatedSector.prize_id,
       probability: updatedSector.probability,
       wheel_id: initialData.key,
@@ -93,6 +93,7 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
       await updateSector(initialData.key, id, payload);
     } catch (error) {
       console.error("Ошибка при обновлении сектора:", error);
+      console.log(payload);
     }
   };
 
@@ -148,13 +149,15 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
     try {
       const newSector = await createSector({
         prize_id: selectedPrize,
-        probability: 0,
+        probability: 50,
         wheel_id: initialData.key,
         prize_type: "material_thing",
       });
+      console.log(">> Новый сектор:", newSector);
       setSectors((prev) => [...prev, newSector]);
       setSelectedPrize(null);
       message.success("Сектор добавлен");
+      console.log(sectors);
     } catch (error) {
       console.error("Ошибка при добавлении сектора:", error);
       message.error("Не удалось добавить сектор");

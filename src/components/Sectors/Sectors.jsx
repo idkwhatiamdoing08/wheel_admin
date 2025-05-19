@@ -9,6 +9,7 @@ function Sectors({
   onProbabilityChange,
   onDeleteSector,
 }) {
+  console.log("sectors", sectors);
   return (
     <div className={styles.sectors_list}>
       {sectors.map((sector, index) => (
@@ -27,8 +28,8 @@ function Sectors({
               className={styles.input_half}
               type="number"
               min={0}
-              max={1}
-              step={0.01}
+              max={100}
+              step={10}
             />
             <Button
               danger
