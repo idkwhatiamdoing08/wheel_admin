@@ -25,7 +25,7 @@ function Wins() {
       );
 
       const result = response.data;
-      const formatted = result.data.map((item, index) => ({
+      const formatted = result.data.map((item) => ({
         key: item.id.toString(),
         name: item.user.username,
         prize: item.prize.name,

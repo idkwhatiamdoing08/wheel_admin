@@ -19,11 +19,19 @@ function PhysicalPrizes() {
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [currentDeleteId, setCurrentDeleteId] = useState(null);
   const [editingPrize, setEditingPrize] = useState(null);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
 
-  const loadPrizes = async () => {
+  const loadPrizes = async (
+    page = pagination.current,
+    pageSize = pagination.pageSize
+  ) => {
     setIsLoading(true);
     try {
-      const data = await fetchPhysicalPrizes();
+      const data = await fetchPhysicalPrizes(page, pageSize);
       const formatted = data.data.map((prize, index) => ({
         key: prize.id.toString(),
         id: `00${index + 1}`,
@@ -31,12 +39,21 @@ function PhysicalPrizes() {
         count: prize.count,
       }));
       setPrizeData(formatted);
+      setPagination({
+        ...pagination,
+        current: data.current_page || page,
+        pageSize: data.per_page || pageSize,
+        total: data.total || 0,
+      });
     } catch (error) {
       message.error("Ошибка при получении списка призов");
       console.error(error);
     } finally {
       setIsLoading(false);
     }
+  };
+  const handleTableChange = (pagination) => {
+    loadPrizes(pagination.current, pagination.pageSize);
   };
 
   const handleSubmit = async (values) => {
@@ -149,10 +166,16 @@ function PhysicalPrizes() {
         columns={columns}
         dataSource={prizeData}
         className={styles.table}
-        pagination={false}
         scroll={{ x: true }}
         bordered
         loading={isLoading}
+        pagination={{
+          ...pagination,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
+          showTotal: (total) => `Всего ${total} записей`,
+        }}
+        onChange={handleTableChange}
       />
 
       {/* <AddPrizeModal

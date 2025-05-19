@@ -5,10 +5,15 @@ import axios from "axios";
 
 function WheelUsers() {
   const [userData, setUserData] = useState(null);
-  const fetchUsers = async () => {
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
+  const fetchUsers = async (page = 1) => {
     try {
       const response = await axios.get(
-        `http://try-your-luck.worktools.space/api/users`,
+        `http://try-your-luck.worktools.space/api/users?page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -16,6 +21,7 @@ function WheelUsers() {
         }
       );
       console.log(response);
+
       const formatted = response.data.data.map((user, index) => ({
         key: user.id.toString(),
         id: index + 1,
@@ -23,6 +29,11 @@ function WheelUsers() {
         role: user.role,
       }));
       setUserData(formatted);
+      setPagination({
+        current: response.data.current_page,
+        pageSize: response.data.per_page,
+        total: response.data.total,
+      });
     } catch (e) {
       console.error(e);
     }
@@ -30,6 +41,9 @@ function WheelUsers() {
   useEffect(() => {
     fetchUsers();
   }, []);
+  const handleTableChange = (pagination) => {
+    fetchUsers(pagination.current);
+  };
 
   const columns = [
     {
@@ -57,8 +71,9 @@ function WheelUsers() {
       <Table
         dataSource={userData}
         columns={columns}
-        pagination={false}
         className={styles.users__table}
+        pagination={pagination}
+        onChange={handleTableChange}
       />
     </div>
   );
