@@ -31,13 +31,23 @@ export async function login({ username, password }) {
 
 export async function refreshAccessToken() {
   try {
-    const refresh_token = getRefreshToken();
-    const response = await axios.post(`${API_URL}/refresh`, { refresh_token });
-    setTokens(response.data);
+    const access_token = getAccessToken();
+    console.log('access_token', access_token)
+    const response = await axios.post(`${API_URL}/refresh`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+
+    });
+    
+    console.log('RESPONSE', response)
+    localStorage.setItem('access_token', response.data.access_token);
     return response.data.access_token;
   } catch (error) {
     console.error("Ошибка обновления токена:", error);
-    clearTokens();
+    // clearTokens();
     throw error;
   }
 }

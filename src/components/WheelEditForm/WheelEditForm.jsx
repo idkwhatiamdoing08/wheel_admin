@@ -56,7 +56,7 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
   const fetchPrizes = async () => {
     try {
       const data = await getPrizes();
-      setPrizes(data);
+      setPrizes(data.data);
     } catch (err) {
       console.error("Ошибка при загрузке призов:", err);
     }

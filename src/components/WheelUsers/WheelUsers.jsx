@@ -16,7 +16,7 @@ function WheelUsers() {
         }
       );
       console.log(response);
-      const formatted = response.data.map((user, index) => ({
+      const formatted = response.data.data.map((user, index) => ({
         key: user.id.toString(),
         id: index + 1,
         name: `${user.surname} ${user.name} ${user.patronymic}`,

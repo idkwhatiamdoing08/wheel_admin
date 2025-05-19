@@ -24,7 +24,7 @@ function PhysicalPrizes() {
     setIsLoading(true);
     try {
       const data = await fetchPhysicalPrizes();
-      const formatted = data.map((prize, index) => ({
+      const formatted = data.data.map((prize, index) => ({
         key: prize.id.toString(),
         id: `00${index + 1}`,
         name: prize.name,

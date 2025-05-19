@@ -25,7 +25,8 @@ function WheelsList() {
     setIsLoading(true);
     try {
       const data = await fetchWheels();
-      const formatted = data.map((wheel, index) => ({
+      console.log(data);
+      const formatted = data.data.map((wheel, index) => ({
         key: wheel.id.toString(),
         id: `00${index + 1}`,
         name: wheel.name,

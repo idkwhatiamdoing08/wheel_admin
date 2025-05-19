@@ -2,18 +2,33 @@
     background: #FFFFFF;
     margin-bottom: 20px;
 }
+
 .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    align-items: center;
+}
+.header__left {
     display: flex;
     gap: 10px;
     width: 1440px;
     margin: 0 auto;
     align-items: center;
-    padding: 20px;
+    
 }
 
 .header__text {
     font-weight: 400;
     font-size: 32px;
     line-height: 100%;
+}
+
+.header__logout button {
+    font-size: 32px;
+    background: none;
+    font-weight: 400;
+    border: none;
+    cursor: pointer;
 }
 
