@@ -23,6 +23,7 @@ function Wins() {
           },
         }
       );
+      console.log(response);
 
       const result = response.data;
       const formatted = result.data.map((item) => ({
@@ -30,6 +31,8 @@ function Wins() {
         name: item.user.username,
         prize: item.prize.name,
         date: item.date,
+        id_wheel: item.wheel.id,
+        wheel: item.wheel.name,
       }));
 
       setUserData(formatted);
@@ -70,6 +73,18 @@ function Wins() {
       title: "Дата выигрыша",
       dataIndex: "date",
       key: "date",
+      align: "center",
+    },
+    {
+      title: "id колеса",
+      dataIndex: "id_wheel",
+      key: "id_wheel",
+      align: "center",
+    },
+    {
+      title: "Название колеса",
+      dataIndex: "wheel",
+      key: "wheel",
       align: "center",
     },
   ];

@@ -58,7 +58,6 @@ function WheelEditForm({
       });
       setSectors(initialData.sectors || []);
       setSectorCount(initialData.count_sectors || 1);
-      fetchPrizes();
     }
   }, [initialData]);
 
@@ -92,12 +91,15 @@ function WheelEditForm({
     setSectors(updatedSectors);
 
     const updatedSector = updatedSectors.find((s) => s.id === id);
+
     const payload = {
-      prize_type: updatedSector.prize_type,
+      prize_type: updatedSector.prize_type || prizeType,
       prize_id: updatedSector.prize?.id || updatedSector.prize_id,
       probability: updatedSector.probability,
       wheel_id: initialData.key,
     };
+    console.log(prizeType);
+    console.log(updatedSector.prize_type);
 
     try {
       await updateSector(id, payload);
@@ -130,7 +132,7 @@ function WheelEditForm({
       await updateWheel(initialData.key, payload);
       console.log("Колесо успешно обновлено");
       onCancel();
-      onSuccessAdd();
+      onSuccess();
     } catch (err) {
       alert(err.response.data.message);
       console.error("Ошибка при обновлении:", err);
@@ -166,10 +168,10 @@ function WheelEditForm({
       });
 
       const fullPrize = prizes.find((p) => p.id === selectedPrize);
-
       const sectorWithPrize = {
         ...newSector,
         prize: fullPrize,
+        prize_type: prizeType,
       };
 
       setSectors((prev) => [...prev, sectorWithPrize]);
@@ -313,7 +315,7 @@ function WheelEditForm({
               >
                 <Option value="material-thing">Вещественный приз</Option>
                 <Option value="empty-prize">Пустой приз</Option>
-                <Option value="promocode">Промкод</Option>
+                <Option value="promocode">Промокод</Option>
                 <Option value="attempt">Попытка</Option>
               </Select>
               <Select

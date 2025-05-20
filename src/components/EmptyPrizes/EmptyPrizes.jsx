@@ -37,7 +37,6 @@ function EmptyPrizes() {
         count: prize.count || 1,
       }));
       setPrizeData(formatted);
-      console.log(data);
       setPagination({
         ...pagination,
         current: data.current_page || page,

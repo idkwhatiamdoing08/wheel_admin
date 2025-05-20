@@ -33,7 +33,6 @@ function WheelsList() {
     setIsLoading(true);
     try {
       const data = await fetchWheels(page, pageSize);
-      console.log(data);
       const formatted = data.data.map((wheel, index) => ({
         key: wheel.id.toString(),
         id: `${(page - 1) * pageSize + index + 1}`,

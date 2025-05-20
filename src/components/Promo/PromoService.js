@@ -11,7 +11,6 @@ export async function fetchPromo(page = 1, pageSize = 10) {
   const response = await axios.get(`${BASE_URL}?page=${page}&per_page=${pageSize}`, {
     headers: getAuthHeader(),
   });
-  console.log(response);
   return response.data;
 }
 export async function addPromo(name) {

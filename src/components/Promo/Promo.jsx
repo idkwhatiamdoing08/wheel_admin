@@ -41,8 +41,9 @@ function Promo() {
         key: prize.id.toString(),
         id: `${(page - 1) * pageSize + index + 1}`,
         name: prize.name,
-        count: promoCount,
+        count: prize.codes_count,
       }));
+      console.log(data);
       setPrizeData(formatted);
       setPagination({
         ...pagination,
@@ -117,11 +118,11 @@ function Promo() {
     try {
       const response = await uploadPromocodeCsv(selectedPromoId.id, file); // заменил id
       console.log(response);
-      message.success("Файл успешно загружен");
+      alert("Файл успешно загружен");
       setUploadModalVisible(false);
     } catch (error) {
       console.error("Ошибка загрузки файла:", error);
-      message.error("Ошибка при загрузке CSV");
+      alert(error.response.data.message);
     } finally {
       setIsLoading(false);
     }

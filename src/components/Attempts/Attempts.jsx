@@ -120,12 +120,7 @@ function Attempts() {
       dataIndex: "name",
       key: "name",
     },
-    {
-      title: "Количество",
-      dataIndex: "count",
-      key: "count",
-      width: 180,
-    },
+
     {
       title: "Действие",
       key: "action",

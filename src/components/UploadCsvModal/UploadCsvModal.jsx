@@ -20,7 +20,7 @@ function UploadCsvModal({ visible, onCancel, onUpload, isLoading, promoName }) {
       return false;
     }
     setFile(file);
-    return false; // Не загружать автоматически
+    return false;
   };
 
   return (
