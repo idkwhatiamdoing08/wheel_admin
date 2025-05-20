@@ -22,14 +22,7 @@ import {
 
 const { Option } = Select;
 
-function WheelEditForm({
-  open,
-  onCancel,
-  initialData,
-  onSuccess,
-  onSuccessAdd,
-}) {
-  const [sectorCount, setSectorCount] = useState(5);
+function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
   const [sectors, setSectors] = useState([]);
   const [prizeType, setPrizeType] = useState(null);
   const [formData, setFormData] = useState({
@@ -38,7 +31,6 @@ function WheelEditForm({
     date_end: null,
     status: "",
     days_of_week: [],
-    count_sectors: 1,
   });
 
   const [prizes, setPrizes] = useState([]);
@@ -49,21 +41,19 @@ function WheelEditForm({
     if (initialData) {
       setFormData({
         name: initialData.name || "",
-        count_sectors: initialData.count_sectors || 1,
         status: initialData.status || "",
         date_start: initialData.date_start || null,
         date_end: initialData.date_end || null,
-        days_of_week: initialData.days_of_week || ["Суббота"],
-        animation: true,
+        days_of_week: initialData.days_of_week,
       });
+      console.log(initialData);
       setSectors(initialData.sectors || []);
-      setSectorCount(initialData.count_sectors || 1);
     }
   }, [initialData]);
 
   const fetchPrizes = async (value) => {
     try {
-      const data = await getPrizes(value);
+      const data = await getPrizes(value, { per_page: "50" });
       console.log(data);
       setPrizes(data.data);
     } catch (err) {
@@ -266,13 +256,13 @@ function WheelEditForm({
                 </label>
                 <div className={styles.checkbox_group}>
                   {[
-                    "Понедельник",
-                    "Вторник",
-                    "Среда",
-                    "Четверг",
-                    "Пятница",
-                    "Суббота",
-                    "Воскресенье",
+                    "понедельник",
+                    "вторник",
+                    "среда",
+                    "четверг",
+                    "пятница",
+                    "суббота",
+                    "воскресенье",
                   ].map((day) => (
                     <Checkbox
                       key={day}
@@ -285,20 +275,6 @@ function WheelEditForm({
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className={styles.form__field}>
-            <label className={styles.form__label}>
-              Введите количество секторов:
-            </label>
-            <Input
-              type="number"
-              value={formData.count_sectors}
-              onChange={(e) =>
-                handleChange("count_sectors", parseInt(e.target.value) || 1)
-              }
-              className={styles.form__input}
-            />
           </div>
 
           <div className={styles.sectors_section}>
@@ -320,6 +296,7 @@ function WheelEditForm({
               </Select>
               <Select
                 style={{ width: 300 }}
+                dropdownStyle={{ maxWidth: 300 }}
                 value={selectedPrize}
                 onChange={setSelectedPrize}
                 placeholder="Выберите приз"

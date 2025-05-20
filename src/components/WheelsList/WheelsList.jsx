@@ -43,6 +43,7 @@ function WheelsList() {
         date_start: wheel.date_start,
         date_end: wheel.date_end,
         sectors: wheel.sectors,
+        days_of_week: wheel.days_of_week,
       }));
       setWheelsData(formatted);
       setPagination({

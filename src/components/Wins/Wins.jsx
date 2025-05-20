@@ -73,6 +73,7 @@ function Wins() {
       title: "Дата выигрыша",
       dataIndex: "date",
       key: "date",
+      width: 200,
       align: "center",
     },
     {
@@ -86,6 +87,7 @@ function Wins() {
       dataIndex: "wheel",
       key: "wheel",
       align: "center",
+      width: 200,
     },
   ];
 

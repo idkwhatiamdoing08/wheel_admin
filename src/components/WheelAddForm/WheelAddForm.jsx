@@ -6,8 +6,6 @@ import { createWheel } from "../WheelsList/WheelsListService";
 function WheelAddForm({ open, onCancel, onSuccess }) {
   const [wheelData, setWheelData] = useState({
     name: "",
-    count_sectors: "",
-    animation: false,
     date_start: "",
     date_end: "",
     days_of_week: ["Суббота", "Воскресенье"],
@@ -81,24 +79,6 @@ function WheelAddForm({ open, onCancel, onSuccess }) {
                     placeholder={["Начало", "Конец"]}
                   />
                 </div>
-              </div>
-
-              <div className={styles.form__field}>
-                <label className={styles.form__label}>
-                  Введите количество секторов:
-                </label>
-                <input
-                  type="number"
-                  placeholder="Кол-во секторов"
-                  className={styles.form__input}
-                  value={wheelData.count_sectors}
-                  onChange={(e) =>
-                    setWheelData({
-                      ...wheelData,
-                      count_sectors: e.target.value,
-                    })
-                  }
-                />
               </div>
             </div>
 

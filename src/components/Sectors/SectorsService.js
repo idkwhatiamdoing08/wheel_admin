@@ -16,9 +16,13 @@ export const deleteSector = async (sectorId) => {
   };
 
   export const getPrizes = async (value) =>
-    (await axios.get(`http://try-your-luck.worktools.space/api/${value}`, { headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      } })).data;
+    (await axios.get(`http://try-your-luck.worktools.space/api/${value}`, {
+      params: {
+        per_page: 50       },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`
+      }
+    })).data;
 
   export const createSector = async (payload) => {
     const response = await axios.post(`${API_BASE_URL}`, payload, {
