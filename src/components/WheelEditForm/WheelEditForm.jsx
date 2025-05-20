@@ -7,6 +7,7 @@ import {
   Button,
   Modal,
   message,
+  InputNumber,
 } from "antd";
 import moment from "moment";
 import styles from "./WheelEditForm.module.css";
@@ -21,9 +22,16 @@ import {
 
 const { Option } = Select;
 
-function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
+function WheelEditForm({
+  open,
+  onCancel,
+  initialData,
+  onSuccess,
+  onSuccessAdd,
+}) {
   const [sectorCount, setSectorCount] = useState(5);
   const [sectors, setSectors] = useState([]);
+  const [prizeType, setPrizeType] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     date_start: null,
@@ -35,6 +43,7 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
 
   const [prizes, setPrizes] = useState([]);
   const [selectedPrize, setSelectedPrize] = useState(null);
+  const [probability, setProbaility] = useState(50);
 
   useEffect(() => {
     if (initialData) {
@@ -53,9 +62,10 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
     }
   }, [initialData]);
 
-  const fetchPrizes = async () => {
+  const fetchPrizes = async (value) => {
     try {
-      const data = await getPrizes();
+      const data = await getPrizes(value);
+      console.log(data);
       setPrizes(data.data);
     } catch (err) {
       console.error("Ошибка при загрузке призов:", err);
@@ -83,14 +93,15 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
 
     const updatedSector = updatedSectors.find((s) => s.id === id);
     const payload = {
-      prize_type: "material_thing",
+      prize_type: updatedSector.prize_type,
       prize_id: updatedSector.prize?.id || updatedSector.prize_id,
       probability: updatedSector.probability,
       wheel_id: initialData.key,
     };
 
     try {
-      await updateSector(initialData.key, id, payload);
+      await updateSector(id, payload);
+      alert("Успешно обновлена вероятность");
     } catch (error) {
       console.error("Ошибка при обновлении сектора:", error);
       console.log(payload);
@@ -119,8 +130,9 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
       await updateWheel(initialData.key, payload);
       console.log("Колесо успешно обновлено");
       onCancel();
-      onSuccess();
+      onSuccessAdd();
     } catch (err) {
+      alert(err.response.data.message);
       console.error("Ошибка при обновлении:", err);
     }
   };
@@ -144,23 +156,29 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
   };
 
   const handleAddSector = async () => {
-    if (!selectedPrize) return;
+    if (!selectedPrize || !prizeType) return;
 
     try {
       const newSector = await createSector({
         prize_id: selectedPrize,
-        probability: 50,
         wheel_id: initialData.key,
-        prize_type: "material_thing",
+        prize_type: prizeType,
       });
-      console.log(">> Новый сектор:", newSector);
-      setSectors((prev) => [...prev, newSector]);
+
+      const fullPrize = prizes.find((p) => p.id === selectedPrize);
+
+      const sectorWithPrize = {
+        ...newSector,
+        prize: fullPrize,
+      };
+
+      setSectors((prev) => [...prev, sectorWithPrize]);
       setSelectedPrize(null);
       message.success("Сектор добавлен");
-      console.log(sectors);
     } catch (error) {
       console.error("Ошибка при добавлении сектора:", error);
       message.error("Не удалось добавить сектор");
+      alert(error.response.data.message);
     }
   };
 
@@ -286,6 +304,20 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
             <div style={{ display: "flex", gap: "10px", marginBottom: "16px" }}>
               <Select
                 style={{ width: 300 }}
+                value={prizeType}
+                onChange={(value) => {
+                  setPrizeType(value);
+                  fetchPrizes(value);
+                }}
+                placeholder="Выберите приз"
+              >
+                <Option value="material-thing">Вещественный приз</Option>
+                <Option value="empty-prize">Пустой приз</Option>
+                <Option value="promocode">Промкод</Option>
+                <Option value="attempt">Попытка</Option>
+              </Select>
+              <Select
+                style={{ width: 300 }}
                 value={selectedPrize}
                 onChange={setSelectedPrize}
                 placeholder="Выберите приз"
@@ -305,6 +337,7 @@ function WheelEditForm({ open, onCancel, initialData, onSuccess }) {
               onPrizeChange={handlePrizeChange}
               onProbabilityChange={handleProbabilityChange}
               onDeleteSector={handleDeleteSector}
+              onUpdateSector={handleSectorChange}
             />
           </div>
 

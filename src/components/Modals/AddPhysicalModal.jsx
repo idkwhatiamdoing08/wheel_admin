@@ -57,7 +57,7 @@ function AddPhysicalModal({
           rules={[
             {
               required: true,
-              message: "Пожалуйста, введите количетсво приза",
+              message: "Пожалуйста, введите количество призов",
             },
           ]}
         >

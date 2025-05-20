@@ -24,24 +24,41 @@ function Promo() {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [selectedPromoId, setSelectedPromoId] = useState(null);
   const [promoCount, setPromoCount] = useState(0);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
 
-  const loadPrizes = async () => {
+  const loadPrizes = async (
+    page = pagination.current,
+    pageSize = pagination.pageSize
+  ) => {
     setIsLoading(true);
     try {
-      const data = await fetchPromo();
+      const data = await fetchPromo(page, pageSize);
       const formatted = data.data.map((prize, index) => ({
         key: prize.id.toString(),
-        id: `00${index + 1}`,
+        id: `${(page - 1) * pageSize + index + 1}`,
         name: prize.name,
         count: promoCount,
       }));
       setPrizeData(formatted);
+      setPagination({
+        ...pagination,
+        current: data.current_page || page,
+        pageSize: data.per_page || pageSize,
+        total: data.total || 0,
+      });
     } catch (error) {
       message.error("Ошибка при получении списка призов");
       console.error(error);
     } finally {
       setIsLoading(false);
     }
+  };
+  const handleTableChange = (pagination) => {
+    loadPrizes(pagination.current, pagination.pageSize);
   };
 
   const handleSubmit = async (values) => {
@@ -193,10 +210,16 @@ function Promo() {
         columns={columns}
         dataSource={prizeData}
         className={styles.table}
-        pagination={false}
         scroll={{ x: true }}
         bordered
         loading={isLoading}
+        pagination={{
+          ...pagination,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
+          showTotal: (total) => `Всего ${total} записей`,
+        }}
+        onChange={handleTableChange}
       />
 
       <AddPrizeModal

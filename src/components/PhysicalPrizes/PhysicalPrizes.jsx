@@ -34,7 +34,7 @@ function PhysicalPrizes() {
       const data = await fetchPhysicalPrizes(page, pageSize);
       const formatted = data.data.map((prize, index) => ({
         key: prize.id.toString(),
-        id: `00${index + 1}`,
+        id: `${(page - 1) * pageSize + index + 1}`,
         name: prize.name,
         count: prize.count,
       }));

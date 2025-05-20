@@ -7,8 +7,8 @@ function getAuthHeader() {
     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
   };
 }
-export async function fetchAttempts() {
-  const response = await axios.get(BASE_URL, {
+export async function fetchAttempts(page = 1, pageSize = 10) {
+  const response = await axios.get(`${BASE_URL}?page=${page}&per_page=${pageSize}`, {
     headers: getAuthHeader(),
   });
   console.log(response);

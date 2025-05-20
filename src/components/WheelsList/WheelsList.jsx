@@ -20,15 +20,23 @@ function WheelsList() {
   const [isLoading, setIsLoading] = useState(false);
   const [wheelsData, setWheelsData] = useState([]);
   const [selectedWheel, setSelectedWheel] = useState(null);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
 
-  const loadWheels = async () => {
+  const loadWheels = async (
+    page = pagination.current,
+    pageSize = pagination.pageSize
+  ) => {
     setIsLoading(true);
     try {
-      const data = await fetchWheels();
+      const data = await fetchWheels(page, pageSize);
       console.log(data);
       const formatted = data.data.map((wheel, index) => ({
         key: wheel.id.toString(),
-        id: `00${index + 1}`,
+        id: `${(page - 1) * pageSize + index + 1}`,
         name: wheel.name,
         activityPeriod: `${wheel.date_start} - ${wheel.date_end}`,
         status: wheel.status,
@@ -38,6 +46,11 @@ function WheelsList() {
         sectors: wheel.sectors,
       }));
       setWheelsData(formatted);
+      setPagination({
+        current: data.current_page,
+        pageSize: data.per_page,
+        total: data.total,
+      });
     } catch (error) {
       message.error("Ошибка при загрузке колес");
       console.error(error);
@@ -55,9 +68,13 @@ function WheelsList() {
       message.success(`Колесо с ID ${record.id} удалено`);
       loadWheels();
     } catch (error) {
-      message.error("Ошибка при удалении колеса");
+      alert("Ошибка при удалении колеса");
       console.error(error);
     }
+  };
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+    loadWheels(newPagination.current, newPagination.pageSize);
   };
 
   const isActive = (record) => {
@@ -168,12 +185,18 @@ function WheelsList() {
         </Button>
       </div>
       <Table
-        pagination={false}
         columns={columns}
         dataSource={wheelsData}
         className={styles.table}
         scroll={{ x: true }}
         rowKey="id"
+        pagination={{
+          ...pagination,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
+          showTotal: (total) => `Всего ${total} записей`,
+        }}
+        onChange={handleTableChange}
       />
       <WheelAddForm
         open={showModal}

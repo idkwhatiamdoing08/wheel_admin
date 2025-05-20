@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const API_URL = 'http://try-your-luck.worktools.space/api/wheel'; // замени на свой
 
-export const fetchWheels = async () => {
+export const fetchWheels = async (page = 1, pageSize = 10) => {
   const token = localStorage.getItem('access_token');
-  const response = await axios.get(API_URL, {
+  const response = await axios.get(`${API_URL}?page=${page}&per_page=${pageSize}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

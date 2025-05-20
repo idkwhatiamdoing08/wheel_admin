@@ -12,11 +12,11 @@ function Wins() {
   });
   const [loading, setLoading] = useState(false);
 
-  const fetchUsers = async (page = 1) => {
+  const fetchUsers = async (page = 1, pageSize = pagination.pageSize) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://try-your-luck.worktools.space/api/user-prize?page=${page}`,
+        `http://try-your-luck.worktools.space/api/user-prize?page=${page}&per_page=${pageSize}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -50,8 +50,9 @@ function Wins() {
     fetchUsers();
   }, []);
 
-  const handleTableChange = (pagination) => {
-    fetchUsers(pagination.current);
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+    fetchUsers(newPagination.current, newPagination.pageSize);
   };
 
   const columns = [
@@ -80,7 +81,12 @@ function Wins() {
       <Table
         dataSource={userData}
         columns={columns}
-        pagination={pagination}
+        pagination={{
+          ...pagination,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50"],
+          showTotal: (total) => `Всего ${total} записей`,
+        }}
         loading={loading}
         onChange={handleTableChange}
         className={styles.users__table}

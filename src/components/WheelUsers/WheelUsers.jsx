@@ -10,10 +10,10 @@ function WheelUsers() {
     pageSize: 10,
     total: 0,
   });
-  const fetchUsers = async (page = 1) => {
+  const fetchUsers = async (page = 1, pageSize = pagination.pageSize) => {
     try {
       const response = await axios.get(
-        `http://try-your-luck.worktools.space/api/users?page=${page}`,
+        `http://try-your-luck.worktools.space/api/users?page=${page}&per_page=${pageSize}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -24,7 +24,7 @@ function WheelUsers() {
 
       const formatted = response.data.data.map((user, index) => ({
         key: user.id.toString(),
-        id: index + 1,
+        id: `${(page - 1) * pageSize + index + 1}`,
         name: `${user.surname} ${user.name} ${user.patronymic}`,
         role: user.role,
       }));
@@ -41,8 +41,9 @@ function WheelUsers() {
   useEffect(() => {
     fetchUsers();
   }, []);
-  const handleTableChange = (pagination) => {
-    fetchUsers(pagination.current);
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+    fetchUsers(newPagination.current, newPagination.pageSize);
   };
 
   const columns = [
@@ -72,7 +73,12 @@ function WheelUsers() {
         dataSource={userData}
         columns={columns}
         className={styles.users__table}
-        pagination={pagination}
+        pagination={{
+          ...pagination,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
+          showTotal: (total) => `Всего ${total} пользователей`,
+        }}
         onChange={handleTableChange}
       />
     </div>

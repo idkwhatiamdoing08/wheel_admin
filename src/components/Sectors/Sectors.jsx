@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./Sectors.module.css";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, CheckOutlined } from "@ant-design/icons";
 import { Input, Button } from "antd";
 
 function Sectors({
@@ -8,6 +8,7 @@ function Sectors({
   onPrizeChange,
   onProbabilityChange,
   onDeleteSector,
+  onUpdateSector,
 }) {
   console.log("sectors", sectors);
   return (
@@ -29,12 +30,16 @@ function Sectors({
               type="number"
               min={0}
               max={100}
-              step={10}
             />
             <Button
               danger
               icon={<DeleteOutlined />}
               onClick={() => onDeleteSector(sector.id)}
+            />
+            <Button
+              text
+              icon={<CheckOutlined />}
+              onClick={() => onUpdateSector(sector.id)}
             />
           </div>
         </div>

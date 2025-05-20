@@ -15,8 +15,8 @@ export const deleteSector = async (sectorId) => {
     return response.data;
   };
 
-  export const getPrizes = async () =>
-    (await axios.get('http://try-your-luck.worktools.space/api/material-thing', { headers: {
+  export const getPrizes = async (value) =>
+    (await axios.get(`http://try-your-luck.worktools.space/api/${value}`, { headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       } })).data;
 
